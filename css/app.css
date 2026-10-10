@@ -1,0 +1,620 @@
+/* app.css - styles for the redesigned pages (dashboard, subjects, notes, tasks)
+   Your old style.css is not touched.
+
+   HOW THE THEMES WORK:
+   All colours are CSS variables. The light colours are in :root.
+   When the dark theme is on, JavaScript adds data-theme="dark" to the <html> tag,
+   and the block [data-theme="dark"] below overrides the same variables. */
+
+/* ---------- LIGHT THEME (default) ---------- */
+:root {
+    --bg: #f1eefc;
+    --card: #ffffff;
+    --text: #1f2a56;
+    --text-soft: #3b4678;
+    --muted: #6b7194;
+    --border: #ddd7f7;
+    --accent: #6e5fd0;          /* links and highlights */
+    --purple: #6e5fd0;          /* bars, ring, checked boxes */
+    --accent-soft: #f1eefc;     /* light lavender chips and empty boxes */
+    --nav-active: #ddd7f7;
+    --banner-bg: #1f2a56;
+    --banner-sub: #dcd8f5;
+    --btn-bg: #1f2a56;
+    --btn-text: #ffffff;
+    --btn-hover: #6e5fd0;
+    --input-bg: #ffffff;
+    --logo-bg: #1f2a56;
+    --green: #2f8f5b;   --green-bg: #e5f4ec;
+    --red: #c0463f;     --red-bg: #fbeceb;
+    --yellow: #8f6400;  --yellow-bg: #fdf3d9;
+    --shadow: 0 2px 10px rgba(31, 42, 86, 0.07);
+    --overlay: rgba(31, 42, 86, 0.4);
+    --radius: 16px;
+}
+
+/* ---------- DARK THEME ---------- */
+[data-theme="dark"] {
+    --bg: #11142a;
+    --card: #1b2040;
+    --text: #eceefb;
+    --text-soft: #c2c6e6;
+    --muted: #9298c0;
+    --border: #2b3160;
+    --accent: #a99ef5;
+    --purple: #7d6ee0;
+    --accent-soft: #262c55;
+    --nav-active: #2b3160;
+    --banner-bg: #262c6a;
+    --banner-sub: #c5c9ee;
+    --btn-bg: #6e5fd0;
+    --btn-text: #ffffff;
+    --btn-hover: #8174e0;
+    --input-bg: #141833;
+    --logo-bg: #6e5fd0;
+    --green: #6fd09b;   --green-bg: #1f3a2e;
+    --red: #ef8a84;     --red-bg: #3a2230;
+    --yellow: #f0c75e;  --yellow-bg: #3b3320;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    --overlay: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;   /* makes date pickers and scrollbars dark too */
+}
+
+/* ---------- Basics ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    transition: background 0.25s, color 0.25s;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 26px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-name { font-size: 1.25rem; font-weight: 700; }
+
+/* CSS-only logo: a circle with an "S" and a soft ring around it */
+.logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--logo-bg);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.top-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.profile-name { font-weight: 600; font-size: 0.95rem; }
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #6e5fd0;
+    color: #fff;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* theme button (moon / sun) */
+.theme-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--accent-soft);
+    color: var(--text);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.theme-btn:hover { background: var(--nav-active); }
+
+.menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text);
+    cursor: pointer;
+}
+
+/* ---------- Layout + sidebar ---------- */
+.layout { display: flex; min-height: calc(100vh - 64px); }
+
+.sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    padding: 22px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.sidebar nav { display: flex; flex-direction: column; gap: 4px; }
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: var(--text-soft);
+    transition: background 0.2s;
+}
+.sidebar a:hover { background: var(--accent-soft); }
+.sidebar a.active { background: var(--nav-active); color: var(--text); font-weight: 600; }
+.sidebar .logout { color: var(--red); }
+.sidebar .logout:hover { background: var(--red-bg); }
+.ico { width: 20px; text-align: center; }
+
+.content { flex: 1; padding: 28px; max-width: 1080px; min-width: 0; }
+
+/* ---------- Page heading (subjects, notes, tasks) ---------- */
+.page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.page-head h1 { font-size: 1.7rem; }
+.page-head p { color: var(--muted); }
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-block;
+    padding: 9px 18px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn:hover { background: var(--btn-hover); }
+.btn-light { background: var(--card); color: var(--text); border-color: var(--border); }
+.btn-light:hover { background: var(--accent-soft); }
+
+.btn-small {
+    display: inline-block;
+    padding: 5px 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text-soft);
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-small:hover { background: var(--accent-soft); }
+.btn-danger { color: var(--red); }
+.btn-danger:hover { background: var(--red-bg); }
+
+.delete-form { display: inline; }
+
+/* ---------- Cards ---------- */
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px;
+    margin-bottom: 20px;
+}
+.card h2 { font-size: 1.15rem; }
+.card-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; }
+.card h3 { font-size: 0.95rem; margin: 20px 0 10px; }
+
+.empty {
+    background: var(--accent-soft);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 10px 0;
+}
+.muted { color: var(--muted); font-size: 0.85rem; }
+.link { display: inline-block; margin-top: 14px; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+.link:hover { text-decoration: underline; }
+
+/* ---------- Forms ---------- */
+.inline-form { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.inline-form input, .inline-form select {
+    flex: 1;
+    min-width: 160px;
+}
+
+input[type="text"], input[type="date"], select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+input::placeholder { color: var(--muted); }
+input:focus, select:focus { outline: 2px solid var(--purple); outline-offset: 1px; }
+
+/* ---------- Tags ---------- */
+.tag { font-size: 0.78rem; padding: 3px 11px; border-radius: 20px; white-space: nowrap; }
+.tag-red { background: var(--red-bg); color: var(--red); }
+.tag-yellow { background: var(--yellow-bg); color: var(--yellow); }
+.tag-green { background: var(--green-bg); color: var(--green); }
+.tag-plain { background: var(--accent-soft); color: var(--text-soft); }
+
+/* ---------- Welcome banner (dashboard) ---------- */
+.welcome {
+    position: relative;
+    overflow: hidden;
+    background: var(--banner-bg);
+    color: #fff;
+    border-radius: 20px;
+    padding: 30px 32px;
+    margin-bottom: 24px;
+}
+.welcome::before, .welcome::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: #c9c0f2;
+    opacity: 0.16;
+}
+.welcome::before { width: 220px; height: 220px; right: -50px; top: -70px; }
+.welcome::after  { width: 120px; height: 120px; right: 130px; bottom: -60px; }
+.welcome-text { position: relative; z-index: 1; }
+.date { font-size: 0.9rem; color: var(--banner-sub); margin-bottom: 2px; }
+.welcome h1 { font-size: 1.9rem; margin-bottom: 4px; }
+.motivation { color: var(--banner-sub); margin-bottom: 18px; max-width: 480px; }
+.welcome-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-white { background: #fff; color: #1f2a56; }
+.btn-white:hover { background: #ddd7f7; }
+.btn-outline { border-color: #c9c0f2; color: #fff; background: transparent; }
+.btn-outline:hover { background: rgba(255, 255, 255, 0.12); }
+
+/* ---------- Quick cards (dashboard) ---------- */
+.quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.quick-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+.quick-card:hover { transform: translateY(-3px); }
+.quick-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.quick-number { font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
+.quick-title { font-weight: 600; margin-top: 2px; }
+.quick-text { font-size: 0.85rem; color: var(--muted); }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ---------- Task checklist (used on dashboard AND tasks page) ---------- */
+.checklist li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    margin: 0 -10px;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+.checklist li:hover { background: var(--accent-soft); }
+
+.task-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    background: var(--input-bg);
+    display: block;
+    transition: background 0.2s, border-color 0.2s;
+}
+.task-check:hover { border-color: var(--purple); }
+.task-check:checked { background: var(--purple); border-color: var(--purple); }
+
+.task-text { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.task-title { font-weight: 600; overflow-wrap: anywhere; }
+.task-subject { font-size: 0.8rem; color: var(--muted); }
+
+/* completed and overdue rows on the tasks page */
+.checklist li.done .task-title { text-decoration: line-through; color: var(--muted); }
+.checklist li.overdue { border-left: 3px solid var(--red); }
+.due { font-size: 0.85rem; color: var(--text-soft); white-space: nowrap; }
+
+/* ---------- Filter tabs (tasks page) ---------- */
+.tabs { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.tabs a {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+.tabs a:hover { background: var(--accent-soft); }
+.tabs a.active { background: var(--btn-bg); border-color: var(--btn-bg); color: var(--btn-text); }
+
+/* ---------- Subjects page ---------- */
+.subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.subject-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.subject-top { display: flex; align-items: center; gap: 14px; }
+.subject-top h3 { margin: 0; font-size: 1.05rem; overflow-wrap: anywhere; }
+.s-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.note-count { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+.note-count:hover { text-decoration: underline; }
+.card-actions { display: flex; gap: 8px; margin-top: auto; }
+
+/* ---------- Notes page ---------- */
+.note-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.note-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.note-card h3 { margin: 0; font-size: 1.05rem; overflow-wrap: anywhere; }
+.note-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.note-date { font-size: 0.82rem; color: var(--muted); }
+.note-body { color: var(--text-soft); overflow-wrap: anywhere; }
+.note-body.clamp {                     /* shows only the first 4 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.read-more {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+}
+.read-more:hover { text-decoration: underline; }
+
+/* ---------- Recent activity (dashboard) ---------- */
+.activity li { display: flex; gap: 12px; padding: 9px 0; align-items: center; }
+.activity li > div { display: flex; flex-direction: column; min-width: 0; }
+.act-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+.act-title { overflow-wrap: anywhere; font-size: 0.95rem; }
+.act-date { font-size: 0.8rem; color: var(--muted); }
+
+/* ---------- Progress (dashboard) ---------- */
+.progress-top { display: flex; align-items: center; gap: 22px; margin-top: 14px; }
+.ring {                                  /* --p is set from PHP (0 to 100) */
+    --p: 0;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: conic-gradient(var(--purple) calc(var(--p) * 1%), var(--accent-soft) 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.ring span {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+.progress-text { font-size: 1.02rem; }
+.bar { height: 9px; background: var(--accent-soft); border-radius: 20px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--purple); border-radius: 20px; transition: width 0.6s; }
+.subject-row { margin-bottom: 14px; }
+.subject-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.92rem; }
+
+/* ---------- Messages + footer ---------- */
+.alert { padding: 11px 16px; border-radius: 10px; margin-bottom: 18px; }
+.alert.success { background: var(--green-bg); color: var(--green); }
+.alert.error { background: var(--red-bg); color: var(--red); }
+.footer-note { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 26px; }
+
+/* ---------- Keyboard focus ---------- */
+a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 2px;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 992px) {
+    .quick { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+}
+
+/* ---------- Mobile: sidebar slides in from the menu button ---------- */
+@media (max-width: 768px) {
+    .menu-btn { display: block; }
+    .profile-name { display: none; }
+
+    .sidebar {
+        position: fixed;
+        top: 64px;
+        left: 0;
+        bottom: 0;
+        z-index: 30;
+        transform: translateX(-100%);
+        transition: transform 0.25s;
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .overlay {
+        display: none;
+        position: fixed;
+        inset: 64px 0 0 0;
+        background: var(--overlay);
+        z-index: 25;
+    }
+    .overlay.show { display: block; }
+
+    .content { padding: 18px 14px; }
+    .welcome { padding: 24px 20px; }
+    .welcome h1 { font-size: 1.55rem; }
+    .progress-top { flex-direction: column; align-items: flex-start; }
+    .checklist li { flex-wrap: wrap; }
+    .note-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+}
+
+/* =====================================================================
+   LOGIN / REGISTER / FORM PAGES (added)
+   ===================================================================== */
+
+/* more input types share the same look as text inputs */
+input[type="password"], input[type="email"], textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+textarea { resize: vertical; line-height: 1.5; }
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--purple); outline-offset: 1px; }
+
+/* one label + one input */
+.field { margin-bottom: 16px; }
+.field label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: var(--text-soft); }
+.field input, .field select, .field textarea { width: 100%; }
+
+.show-pass { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--muted); margin-bottom: 18px; cursor: pointer; }
+.show-pass input { accent-color: var(--purple); }
+
+.form-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.form-card { max-width: 640px; }
+
+/* ---------- Login / register page (no sidebar) ---------- */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+}
+.auth-theme { position: fixed; top: 16px; right: 16px; }
+.auth-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+.auth-brand .brand-name { font-size: 1.5rem; }
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 30px 28px;
+}
+.auth-card h1 { font-size: 1.5rem; margin-bottom: 4px; }
+.auth-sub { color: var(--muted); margin-bottom: 22px; }
+.auth-card .btn { width: 100%; padding: 11px; }
+.auth-switch { text-align: center; margin-top: 18px; font-size: 0.92rem; color: var(--muted); }
+.auth-switch a { color: var(--accent); font-weight: 600; }
+.auth-switch a:hover { text-decoration: underline; }
+.auth-note { margin-top: 18px; text-align: center; font-size: 0.85rem; color: var(--muted); max-width: 420px; }
+
+/* ---------- Logo image (books icon) ----------
+   To make the icon bigger or smaller, change ONLY these two numbers:
+   --logo-size       = icon in the top bar (dashboard, subjects, notes, tasks)
+   --logo-size-auth  = icon on the login and register pages */
+:root {
+    --logo-size: 28px;
+    --logo-size-auth: 38px;
+}
+.logo-img { width: var(--logo-size); height: var(--logo-size); display: block; }
+.auth-brand .logo-img { width: var(--logo-size-auth); height: var(--logo-size-auth); }
+
+/* In dark theme the icon's black outline would blend in, so give it a light rounded backing */
+[data-theme="dark"] .logo-img {
+    background: #f4f1ff;
+    border-radius: 8px;
+    padding: 2px;
+}
