@@ -3,6 +3,10 @@
 require_once 'config.php';
 require_once 'includes/auth_check.php';
 
+// Use Indian time for the greeting and for "today" (change this if you live elsewhere)
+date_default_timezone_set('Asia/Kolkata');
+$today = date("Y-m-d");
+
 // ---------- 1. Counts ----------
 function count_rows($conn, $sql, $user_id) {
     $stmt = mysqli_prepare($conn, $sql);
@@ -16,7 +20,11 @@ $total_subjects = count_rows($conn, "SELECT COUNT(*) AS total FROM subjects WHER
 $total_notes    = count_rows($conn, "SELECT COUNT(*) AS total FROM notes WHERE user_id = ?", $user_id);
 $pending_tasks  = count_rows($conn, "SELECT COUNT(*) AS total FROM tasks WHERE user_id = ? AND status = 'Pending'", $user_id);
 $done_tasks     = count_rows($conn, "SELECT COUNT(*) AS total FROM tasks WHERE user_id = ? AND status = 'Completed'", $user_id);
-$overdue_tasks  = count_rows($conn, "SELECT COUNT(*) AS total FROM tasks WHERE user_id = ? AND status = 'Pending' AND due_date < CURDATE()", $user_id);
+// overdue = pending tasks whose due date is before today
+$stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM tasks WHERE user_id = ? AND status = 'Pending' AND due_date < ?");
+mysqli_stmt_bind_param($stmt, "is", $user_id, $today);
+mysqli_stmt_execute($stmt);
+$overdue_tasks = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))['total'];
 
 $all_tasks = $pending_tasks + $done_tasks;
 $percent   = ($all_tasks > 0) ? round(($done_tasks / $all_tasks) * 100) : 0;
@@ -50,11 +58,12 @@ mysqli_stmt_execute($stmt);
 $subject_progress = mysqli_stmt_get_result($stmt);
 
 // ---------- 5. Greeting details ----------
-$today = date("Y-m-d");
-$hour  = (int)date("G");
-if ($hour < 12)     { $greeting = "Good morning"; }
-elseif ($hour < 17) { $greeting = "Good afternoon"; }
-else                { $greeting = "Good evening"; }
+$hour = (int)date("G");   // current hour, 0 to 23
+
+if ($hour >= 5 && $hour < 12)       { $greeting = "Good morning"; }     // 5 am to 11:59 am
+elseif ($hour >= 12 && $hour < 17)  { $greeting = "Good afternoon"; }   // 12 pm to 4:59 pm
+elseif ($hour >= 17 && $hour < 21)  { $greeting = "Good evening"; }     // 5 pm to 8:59 pm
+else                                { $greeting = "Good night"; }       // 9 pm to 4:59 am
 
 $date_text = date("l, d F");
 

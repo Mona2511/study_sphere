@@ -2,6 +2,9 @@
 require_once 'config.php';
 require_once 'includes/auth_check.php';
 
+// Same timezone as the dashboard, so "Overdue" is decided by Indian date
+date_default_timezone_set('Asia/Kolkata');
+
 // Add new task (same logic as before)
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $title = trim($_POST['title']);
